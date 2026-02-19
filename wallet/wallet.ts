@@ -1,5 +1,5 @@
-import { Keypair } from "@solana/web3.js";
 import * as fs from "fs";
+import { Keypair } from "@solana/web3.js";
 
 declare const console: any;
 
@@ -24,7 +24,10 @@ function saveWalletToFile(keypair: Keypair, filename: string) {
   console.log(`Wallet saved to ${filename}`);
 }
 
+function readSavedWalletDataFromFile(filename: string) {
+  const importedPublicKey = JSON.parse(fs.readFileSync(filename));
+  const secretKeyArray = new Uint8Array(importedPublicKey.secretKey);
+  return Keypair.fromSecretKey(secretKeyArray);
+}
+
 export { createWalletWithKeypair, saveWalletToFile };
-
-
-

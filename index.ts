@@ -1,4 +1,4 @@
 import { createWalletWithKeypair, saveWalletToFile } from "./wallet/wallet";
 
-createWalletWithKeypair();
-saveWalletToFile(createWalletWithKeypair(), "my_wallet.json");
+const createdWalletData = createWalletWithKeypair();
+saveWalletToFile(createdWalletData, "my_wallet.json");
