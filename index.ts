@@ -1,1 +1,3 @@
-console.log("Hello via Bun!");
+import { createWalletWithKeypair } from "./wallet/wallet";
+
+createWalletWithKeypair();
