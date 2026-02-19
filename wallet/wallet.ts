@@ -1,14 +1,15 @@
 import * as fs from "fs";
 import { Keypair } from "@solana/web3.js";
 
+
 declare const console: any;
+
 
 function createWalletWithKeypair(agentName: string) {
   const keypair = Keypair.generate();
 
   console.log(`${agentName} wallet created 
-    keypair.publicKey.toBase58(),`
-  );
+    keypair.publicKey.toBase58(),`);
 
   return keypair;
 }
@@ -29,4 +30,8 @@ function readSavedWalletDataFromFile(filename: string) {
   return Keypair.fromSecretKey(secretKeyArray);
 }
 
-export { createWalletWithKeypair, saveWalletToFile, readSavedWalletDataFromFile };
+export {
+  createWalletWithKeypair,
+  saveWalletToFile,
+  readSavedWalletDataFromFile,
+};
