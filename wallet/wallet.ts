@@ -30,4 +30,4 @@ function readSavedWalletDataFromFile(filename: string) {
   return Keypair.fromSecretKey(secretKeyArray);
 }
 
-export { createWalletWithKeypair, saveWalletToFile };
+export { createWalletWithKeypair, saveWalletToFile, readSavedWalletDataFromFile };
