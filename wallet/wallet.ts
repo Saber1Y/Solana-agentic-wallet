@@ -8,8 +8,7 @@ declare const console: any;
 function createWalletWithKeypair(agentName: string) {
   const keypair = Keypair.generate();
 
-  console.log(`${agentName} wallet created 
-    keypair.publicKey.toBase58(),`);
+  console.log(`${agentName} wallet created: ${keypair.publicKey.toBase58()}`);
 
   return keypair;
 }
@@ -25,7 +24,7 @@ function saveWalletToFile(keypair: Keypair, filename: string) {
 }
 
 function readSavedWalletDataFromFile(filename: string) {
-  const importedPublicKey = JSON.parse(fs.readFileSync(filename));
+  const importedPublicKey = JSON.parse(fs.readFileSync(filename).toString());
   const secretKeyArray = new Uint8Array(importedPublicKey.secretKey);
   return Keypair.fromSecretKey(secretKeyArray);
 }
