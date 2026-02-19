@@ -3,12 +3,11 @@ import { Keypair } from "@solana/web3.js";
 
 declare const console: any;
 
-function createWalletWithKeypair() {
+function createWalletWithKeypair(agentName: string) {
   const keypair = Keypair.generate();
 
-  console.log(
-    "New wallet created with public key:",
-    keypair.publicKey.toBase58(),
+  console.log(`${agentName} wallet created 
+    keypair.publicKey.toBase58(),`
   );
 
   return keypair;

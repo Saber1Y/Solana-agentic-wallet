@@ -1,9 +1,21 @@
-import { createWalletWithKeypair, saveWalletToFile, readSavedWalletDataFromFile } from "./wallet/wallet";
+import {
+  createWalletWithKeypair,
+  saveWalletToFile,
+  readSavedWalletDataFromFile,
+} from "./wallet/wallet";
 
 declare const console: { log: (...args: any[]) => void };
 
-const createdWalletData = createWalletWithKeypair();
-saveWalletToFile(createdWalletData, "my_wallet.json");
+const agentA = createWalletWithKeypair("Agent A");
+saveWalletToFile(agentA, "agent-a.json");
 
-const loadWalletData = readSavedWalletDataFromFile("my_wallet.json")
-console.log("Loaded data", loadWalletData.publicKey.toBase58());
+const agentB = createWalletWithKeypair("Agent B");
+saveWalletToFile(agentB, "agent-b.json");
+
+const loadAgentAWalletData = readSavedWalletDataFromFile("agent-a.json");
+const loadAgentBWalletData = readSavedWalletDataFromFile("agent-b.json");
+
+console.log("Loaded data", {
+  loadAgentAWalletData,
+  loadAgentBWalletData,
+});
