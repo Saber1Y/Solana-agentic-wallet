@@ -1,3 +1,6 @@
-import { Connection, clusterApiUrl } from "@solana/web3.js";
+import { Connection } from "@solana/web3.js";
 
-export const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+export const connection = new Connection(
+  "https://api.testnet.solana.com",
+  "confirmed",
+);

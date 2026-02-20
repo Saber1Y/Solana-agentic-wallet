@@ -1,6 +1,7 @@
 import * as fs from "fs";
-import { Keypair } from "@solana/web3.js";
-
+import { Keypair, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
+import { sendAndConfirmTransaction } from "@solana/web3.js";
+import { connection } from "./connections";
 
 declare const console: any;
 
@@ -29,8 +30,22 @@ function readSavedWalletDataFromFile(filename: string) {
   return Keypair.fromSecretKey(secretKeyArray);
 }
 
+async function sendSOL(from: Keypair, to: PublicKey, amount: number): Promise<string> {
+  const transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: from.publicKey,
+      toPubkey: to,
+      lamports: amount * 1e9,
+    })
+  );
+
+  const signature = await sendAndConfirmTransaction(connection, transaction, [from]);
+  return signature;
+}
+
 export {
   createWalletWithKeypair,
   saveWalletToFile,
   readSavedWalletDataFromFile,
+  sendSOL,
 };
