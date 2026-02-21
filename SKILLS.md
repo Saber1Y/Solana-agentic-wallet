@@ -118,9 +118,35 @@ if (balance > threshold) {
 
 ---
 
+## Token Operations
+
+### Get SPL Token Balance
+```typescript
+import { getTokenBalance } from "./wallet/wallet";
+import { PublicKey } from "@solana/web3.js";
+
+const tokenMint = new PublicKey("YOUR_TOKEN_MINT_ADDRESS");
+const balance = await getTokenBalance(walletPublicKey, tokenMint);
+```
+- Returns token balance (UI units)
+- Returns 0 if no token account exists
+
+### Send SPL Token
+```typescript
+import { sendSPLToken } from "./wallet/wallet";
+import { PublicKey } from "@solana/web3.js";
+
+const tokenMint = new PublicKey("YOUR_TOKEN_MINT_ADDRESS");
+const signature = await sendSPLToken(fromKeypair, toPublicKey, tokenMint, amount);
+```
+- Transfers SPL tokens between wallets
+- Requires token accounts to exist for both sender and receiver
+- Returns transaction signature
+
+---
+
 ## Limitations
 
-- Currently supports SOL only (not SPL tokens)
 - Runs on devnet only (not mainnet)
 - Local JSON key storage (not encrypted)
 - Rule-based decisions (no AI/ML)

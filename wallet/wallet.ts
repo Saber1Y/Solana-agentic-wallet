@@ -56,10 +56,49 @@ async function sendSOL(from: Keypair, to: PublicKey, amount: number): Promise<st
   return signature;
 }
 
+async function getTokenBalance(wallet: PublicKey, tokenMint: PublicKey): Promise<number> {
+  const tokenAccount = await getAssociatedTokenAddress(wallet, tokenMint);
+  
+  try {
+    const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
+    if (accountInfo.value === null) {
+      return 0;
+    }
+    const data = accountInfo.value.data as any;
+    return data.parsed.info.tokenAmount.uiAmount || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+async function sendSPLToken(
+  from: Keypair,
+  to: PublicKey,
+  tokenMint: PublicKey,
+  amount: number
+): Promise<string> {
+  const fromTokenAccount = await getAssociatedTokenAddress(from.publicKey, tokenMint);
+  const toTokenAccount = await getAssociatedTokenAddress(to, tokenMint);
+
+  const transaction = new Transaction().add(
+    createTransferInstruction(
+      fromTokenAccount,
+      toTokenAccount,
+      from.publicKey,
+      amount * Math.pow(10, 9) // Assuming 9 decimals
+    )
+  );
+
+  const signature = await sendAndConfirmTransaction(connection, transaction, [from]);
+  return signature;
+}
+
 export {
   createWalletWithKeypair,
   saveWalletToFile,
   readSavedWalletDataFromFile,
   createOrLoadWallet,
   sendSOL,
+  getTokenBalance,
+  sendSPLToken,
 };
