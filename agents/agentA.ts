@@ -11,9 +11,9 @@ const balance = balanceLamports / 1e9;
 
 console.log(`Balance: ${balance} SOL`);
 
-if (balance > 0.5) {
-  console.log("Decision: sending 0.1 SOL to Agent B");
-  const signature = await sendSOL(agentA, agentB.publicKey, 0.1);
+if (balance > 0.01) {
+  console.log("Decision: sending 0.0001 SOL to Agent B");
+  const signature = await sendSOL(agentA, agentB.publicKey, 0.0001);
   console.log("Transaction confirmed:", signature);
 } else {
   console.log("Balance too low to send");
