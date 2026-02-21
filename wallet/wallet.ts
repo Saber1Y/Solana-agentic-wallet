@@ -30,6 +30,18 @@ function readSavedWalletDataFromFile(filename: string) {
   return Keypair.fromSecretKey(secretKeyArray);
 }
 
+function createOrLoadWallet(agentName: string, filename: string): Keypair {
+  if (fs.existsSync(filename)) {
+    console.log(`Loading existing ${agentName} wallet from ${filename}`);
+    return readSavedWalletDataFromFile(filename);
+  }
+
+  const keypair = Keypair.generate();
+  console.log(`${agentName} wallet created: ${keypair.publicKey.toBase58()}`);
+  saveWalletToFile(keypair, filename);
+  return keypair;
+}
+
 async function sendSOL(from: Keypair, to: PublicKey, amount: number): Promise<string> {
   const transaction = new Transaction().add(
     SystemProgram.transfer({
@@ -47,5 +59,6 @@ export {
   createWalletWithKeypair,
   saveWalletToFile,
   readSavedWalletDataFromFile,
+  createOrLoadWallet,
   sendSOL,
 };
