@@ -2,6 +2,7 @@ import * as fs from "fs";
 import { Keypair, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
 import { sendAndConfirmTransaction } from "@solana/web3.js";
 import { connection } from "./connections";
+import { getAssociatedTokenAddress, createTransferInstruction, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 declare const console: any;
 

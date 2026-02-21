@@ -4,18 +4,6 @@ A **Two-Agent Sandbox Economy** demonstrating autonomous AI agent wallets on Sol
 
 ---
 
-## Bounty Requirements ✅
-
-| Requirement | Status | Implementation |
-|-------------|:------:|----------------|
-| Create wallet programmatically | ✅ | `createOrLoadWallet()` generates keypairs |
-| Sign transactions automatically | ✅ | `sendSOL()` signs and confirms |
-| Hold SOL | ✅ | Wallets store SOL on devnet |
-| Interact with test dApp/protocol | ✅ | Dashboard monitors wallet state |
-| Open-source code | ✅ | This repo |
-| Clear README and setup | ✅ | This file |
-
----
 
 ## What is an Agentic Wallet?
 
@@ -142,40 +130,132 @@ Shows live balances and agent behavior (auto-refreshes every 3 seconds).
 ### Why Autonomous Wallets?
 
 AI agents need to act on behalf of users in DeFi, trading, and automation scenarios. Autonomous wallets enable:
-- 24/7 automated trading strategies
-- Self-executing smart contracts
-- AI-powered yield farming
-- Automated treasury management
 
-### How Agents Call Wallet APIs
+- **24/7 automated trading** - Agents can execute strategies without human intervention
+- **Self-executing financial strategies** - Conditional payments based on market data
+- **AI-powered yield optimization** - Agents can move funds between protocols
+- **Automated treasury management** - Companies can automate payroll and expenses
+
+Traditional wallets require human approval for every transaction. Agentic wallets remove this bottleneck, allowing AI systems to function as autonomous financial actors.
+
+---
+
+### Wallet Design
+
+Our wallet follows a **modular architecture** with clear separation:
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    Agent Layer                      │
+│         (Decision making, business logic)           │
+├─────────────────────────────────────────────────────┤
+│                  Wallet Module                      │
+│      (Key management, signing, transactions)        │
+├─────────────────────────────────────────────────────┤
+│                 Solana Network                     │
+│            (Devnet for testing)                     │
+└─────────────────────────────────────────────────────┘
+```
+
+**Key Design Decisions:**
+
+1. **Wallet Module (`wallet.ts`)** - Handles all cryptographic operations
+   - `createOrLoadWallet()` - Generates or retrieves keypairs
+   - `sendSOL()` - Signs and broadcasts transactions
+   - `readSavedWalletDataFromFile()` - Loads keys from storage
+
+2. **Connection Module (`connections.ts`)** - Single connection instance
+   - Prevents connection proliferation
+   - Manages devnet RPC endpoint
+
+3. **Agent Layer (`agents/`)** - Business logic
+   - Decision-making (balance thresholds)
+   - Payment execution
+   - Balance monitoring
+
+---
+
+### Security Considerations
+
+| Aspect | Implementation | Production Recommendation |
+|--------|---------------|---------------------------|
+| Key Storage | Local JSON files | HSM, AWS KMS, Azure Key Vault |
+| Signing | In-memory Keypair | Hardware security module |
+| Network | Devnet only | Mainnet with multi-sig |
+| Secrets | Never hardcoded | Environment variables + encryption |
+
+**Current Security Model:**
+- Keys stored in `agent-a.json`, `agent-b.json`
+- Files not committed to git (`.gitignore`)
+- No secrets in source code
+- Devnet-only limits financial risk
+
+**For Production:**
+- Encrypt keys at rest (AES-256)
+- Use hardware wallets for signing
+- Implement rate limiting
+- Add transaction approval workflows
+
+---
+
+### How Agents Interact with Wallets
 
 ```typescript
-// 1. Load wallet from secure storage
-const wallet = loadWallet("agent-a.json");
-
-// 2. Agent makes decision
-if (balance > threshold) {
-  // 3. Sign and send transaction
-  await sendSOL(wallet, recipient, amount);
+// Agent A's decision logic
+async function runAgent() {
+  // 1. Load wallet (keys loaded into memory)
+  const walletA = loadWallet("agent-a.json");
+  
+  // 2. Check state (query blockchain)
+  const balance = await connection.getBalance(walletA.publicKey);
+  
+  // 3. Make decision (programmatic logic)
+  if (balance > 0.5 * 1e9) {  // 0.5 SOL
+    // 4. Execute (signs with loaded key)
+    await sendSOL(walletA, agentBAddress, 0.1 * 1e9);
+  }
 }
 ```
 
+**The agent never stores secrets permanently** - keys are loaded into memory, used for signing, and the process exits. This minimizes exposure.
+
+---
+
 ### Scalability
 
-The design supports N agents independently:
-- Each agent has its own wallet file
-- Agent logic is isolated
-- Adding Agent C, D, etc. is trivial
-- Works with any number of concurrent agents
+The architecture scales to N agents:
+
+```
+┌──────────┐  ┌──────────┐  ┌──────────┐
+│ Agent A  │  │ Agent B  │  │ Agent N  │
+│ Wallet   │  │ Wallet   │  │ Wallet   │
+└────┬─────┘  └────┬─────┘  └────┬─────┘
+     │             │             │
+     └─────────────┴─────────────┘
+                   │
+            ┌──────┴──────┐
+            │ Wallet      │
+            │ Module      │
+            └─────────────┘
+```
+
+- Each agent has independent wallet file
+- Adding Agent C, D, E... requires only a new wallet file
+- No shared state between agents
+- Can run agents in parallel processes
+- Dashboard monitors all simultaneously
+
+---
 
 ### Tradeoffs
 
-| Aspect | Benefit | Risk |
-|--------|---------|------|
-| Local key storage | Simple, fast | Physical security of machine |
+| Decision | Benefit | Risk |
+|----------|---------|------|
+| Local JSON keys | Simple, fast development | Physical machine security |
 | Programmatic signing | Full automation | No human oversight |
-| Devnet-only | Safe testing | Requires funding for prod |
-| Rule-based decisions | Predictable | No AI/ML adaptation |
+| Rule-based agents | Predictable, testable | No AI/ML adaptation |
+| Devnet-only | Zero financial risk | Doesn't prove mainnet viability |
+| SOL only | Focused scope | Limited token support |
 
 
 
