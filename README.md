@@ -5,7 +5,40 @@ A **Two-Agent Sandbox Economy** demonstrating autonomous AI agent wallets on Sol
 ---
 
 
-## What is an Agentic Wallet?
+## Bounty Requirements ✅
+
+| Requirement | Status | Implementation |
+|-------------|:------:|----------------|
+| Create wallet programmatically | ✅ | `createOrLoadWallet()` generates keypairs |
+| Sign transactions automatically | ✅ | `sendSOL()` signs and confirms |
+| Hold SOL | ✅ | Wallets store SOL on devnet |
+| Hold SPL tokens | ✅ | `getTokenBalance()`, `sendSPLToken()` |
+| Interact with test dApp/protocol | ✅ | Dashboard monitors wallet state |
+| Open-source code | ✅ | This repo |
+| Clear README and setup | ✅ | This file |
+| SKILLS.md | ✅ | Agent capabilities documented |
+
+---
+
+## Quick Test for Judges (30 seconds)
+
+```bash
+# 1. Clone and install
+bun install
+
+# 2. Check wallets exist (pre-funded)
+bun agents/checkBalance.ts
+
+# 3. Run autonomous simulation (watches agents pay each other)
+bun run scripts/run-simulation.ts
+
+# 4. Watch dashboard in another terminal
+bun run scripts/dashboard.ts
+```
+
+---
+
+## What to Expect
 
 An agentic wallet is a cryptocurrency wallet controlled by an AI agent rather than a human. The agent can:
 - Create wallets programmatically
@@ -39,14 +72,17 @@ This project demonstrates two AI agents (Agent A and Agent B) with their own wal
 ```
 solana-agentic-wallet/
 ├── wallet/
-│   ├── wallet.ts       # Keypair creation, save, load, sendSOL
+│   ├── wallet.ts       # Keypair creation, save, load, sendSOL, SPL tokens
 │   └── connections.ts  # Solana devnet connection
 ├── agents/
 │   ├── agentA.ts       # Spender agent - checks balance, sends SOL
-│   └── checkBalance.ts # Utility to check wallet balance
+│   ├── checkBalance.ts # Check SOL balances
+│   └── checkTokenBalance.ts # Check SPL token balances
 ├── scripts/
-│   ├── create-wallet.ts # Create or load wallets
-│   └── dashboard.ts     # Real-time agent dashboard
+│   ├── create-wallet.ts   # Create or load wallets
+│   ├── dashboard.ts       # Real-time agent dashboard
+│   └── run-simulation.ts  # Autonomous agent loop
+├── SKILLS.md               # Agent capabilities documentation
 └── README.md
 ```
 
@@ -269,14 +305,23 @@ The architecture scales to N agents:
 ## Commands Reference
 
 ```bash
-# Create or load wallets
+# Install dependencies
+bun install
+
+# Create or load wallets (creates if not exists)
 bun run scripts/create-wallet.ts
 
-# Check balance of both agents
+# Check SOL balances
 bun agents/checkBalance.ts
 
-# Run Agent A (sends payment if balance > 0.5 SOL)
+# Check SPL token balances (pass token mint address)
+bun agents/checkTokenBalance.ts <TOKEN_MINT>
+
+# Run Agent A (sends payment if balance > threshold)
 bun agents/agentA.ts
+
+# Run autonomous simulation (auto-pays every 10 seconds)
+bun run scripts/run-simulation.ts
 
 # Run real-time dashboard
 bun run scripts/dashboard.ts
